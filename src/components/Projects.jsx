@@ -44,7 +44,8 @@ const projectsData = [
   }
 ];
 
-const featuredProjects = projectsData.slice(0, 7);
+const desktopFeaturedProjects = projectsData.slice(0, 7);
+const mobileFeaturedProjects = projectsData.slice(0, 3);
 
 const Projects = () => {
   const [isProjectsArchiveOpen, setIsProjectsArchiveOpen] = useState(false);
@@ -56,7 +57,8 @@ const Projects = () => {
   const archiveRef = useRef(null);
   const gestureRef = useRef({ intent: null, startX: 0, startY: 0 });
   const suppressClickRef = useRef(false);
-  const displayedProjects = [...featuredProjects, null];
+  const desktopDisplayedProjects = [...desktopFeaturedProjects, null];
+  const mobileDisplayedProjects = [...mobileFeaturedProjects, null];
 
   const revealAllProjects = () => {
     setIsProjectsArchiveOpen(true);
@@ -570,7 +572,7 @@ const Projects = () => {
           {/* =================================
               DESKTOP PROJECT CARDS
           ================================= */}
-          {displayedProjects.map((project, i) => (
+          {desktopDisplayedProjects.map((project, i) => (
             <div
               key={i}
               ref={(el) => {
@@ -911,7 +913,7 @@ const Projects = () => {
           }
         `}</style>
 
-        {displayedProjects.map((project, i) => (
+        {mobileDisplayedProjects.map((project, i) => (
           <div
             key={`mob-${i}`}
             ref={(el) => {
