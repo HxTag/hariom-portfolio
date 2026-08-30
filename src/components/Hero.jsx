@@ -361,8 +361,7 @@ const Hero = () => {
         w-full
         min-h-screen
         bg-[#050505]
-        overflow-x-hidden
-        overflow-y-visible
+        overflow-hidden
         flex
         flex-col
         select-none
