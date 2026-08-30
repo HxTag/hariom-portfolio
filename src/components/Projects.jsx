@@ -139,7 +139,7 @@ const Projects = () => {
     );
   }, [isProjectsArchiveOpen]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!isProjectsArchiveOpen) return undefined;
 
     const handleKeyDown = (event) => {
@@ -148,6 +148,38 @@ const Projects = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isProjectsArchiveOpen]);
+
+  useLayoutEffect(() => {
+    if (!isProjectsArchiveOpen) return undefined;
+
+    const scrollY = window.scrollY;
+    const { body, documentElement } = document;
+    const originalBodyStyles = {
+      position: body.style.position,
+      top: body.style.top,
+      width: body.style.width,
+      overflow: body.style.overflow
+    };
+    const originalHtmlOverflow = documentElement.style.overflow;
+    const originalScrollBehavior = documentElement.style.scrollBehavior;
+
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollY}px`;
+    body.style.width = '100%';
+    body.style.overflow = 'hidden';
+    documentElement.style.overflow = 'hidden';
+
+    return () => {
+      body.style.position = originalBodyStyles.position;
+      body.style.top = originalBodyStyles.top;
+      body.style.width = originalBodyStyles.width;
+      body.style.overflow = originalBodyStyles.overflow;
+      documentElement.style.overflow = originalHtmlOverflow;
+      documentElement.style.scrollBehavior = 'auto';
+      window.scrollTo(0, scrollY);
+      documentElement.style.scrollBehavior = originalScrollBehavior;
+    };
   }, [isProjectsArchiveOpen]);
 
   useLayoutEffect(() => {
@@ -1087,7 +1119,7 @@ const Projects = () => {
           role="dialog"
           aria-modal="true"
           aria-labelledby="projects-archive-title"
-          className="fixed inset-0 z-[200] overflow-y-auto bg-[#0b0b0b]/95 backdrop-blur-xl px-5 py-8 md:px-10 md:py-12"
+          className="fixed inset-0 z-[200] overflow-y-auto overscroll-contain bg-[#0b0b0b]/95 backdrop-blur-xl px-5 py-8 md:px-10 md:py-12"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) closeProjectsArchive();
           }}
