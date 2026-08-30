@@ -20,6 +20,16 @@ body {
   color: #fff;
 }
 
+.desktop-cursor {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .desktop-cursor {
+    display: flex;
+  }
+}
+
 [data-aos="drop-bounce"] {
   opacity: 0;
 }

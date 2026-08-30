@@ -7,6 +7,10 @@ const CustomCursor = () => {
   const spotlightRef = useRef(null);
 
   useEffect(() => {
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      return undefined;
+    }
+
     const dot = dotRef.current;
     const ring = ringRef.current;
     const spotlight = spotlightRef.current;
@@ -64,7 +68,7 @@ const CustomCursor = () => {
       {/* Global Mouse Follower Spotlight Beam */}
       <div
         ref={spotlightRef}
-        className="fixed top-0 left-0 w-[700px] h-[700px] rounded-full pointer-events-none z-[9998] opacity-0 blur-[100px] transition-opacity duration-300"
+        className="desktop-cursor fixed top-0 left-0 w-[700px] h-[700px] rounded-full pointer-events-none z-[9998] opacity-0 blur-[100px] transition-opacity duration-300"
         style={{
           background: 'radial-gradient(circle, rgba(229,9,20,0.2) 0%, rgba(229,9,20,0.06) 45%, transparent 75%)'
         }}
@@ -73,13 +77,13 @@ const CustomCursor = () => {
       {/* Global Custom Cursor Dot */}
       <div
         ref={dotRef}
-        className="fixed top-0 left-0 z-[9999] pointer-events-none w-3 h-3 bg-red-600 rounded-full shadow-[0_0_15px_#E50914]"
+        className="desktop-cursor fixed top-0 left-0 z-[9999] pointer-events-none w-3 h-3 bg-red-600 rounded-full shadow-[0_0_15px_#E50914]"
       ></div>
 
       {/* Global Custom Cursor Ring */}
       <div
         ref={ringRef}
-        className="fixed top-0 left-0 z-[9999] pointer-events-none w-12 h-12 border border-red-600/60 rounded-full flex items-center justify-center backdrop-blur-[1px]"
+        className="desktop-cursor fixed top-0 left-0 z-[9999] pointer-events-none w-12 h-12 border border-red-600/60 rounded-full flex items-center justify-center backdrop-blur-[1px]"
       ></div>
     </>
   );
