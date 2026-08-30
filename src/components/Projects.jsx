@@ -25,12 +25,21 @@ const projectsData = [
     url: "https://github.com/HxTag/Virtual-Study-Group"
   },
   {
+    title: "Smart Eye Monitor",
+    category: "Computer Vision & AI",
+    description:
+      "A Python webcam application that monitors face visibility, eye state, and distance from the camera, with configurable voice alerts and activity logging.",
+    tags: ["Python", "OpenCV", "MediaPipe", "Pygame"],
+    episode: "S01 E03",
+    url: "https://github.com/HxTag/smart-eye-monitor"
+  },
+  {
     title: "Netflix Developer Portfolio",
     category: "Frontend Development",
     description:
       "Cinematic developer portfolio inspired by Netflix, featuring interactive animations, responsive layouts, custom cursor effects, and GSAP-powered interactions.",
     tags: ["React", "GSAP", "Tailwind CSS", "JavaScript"],
-    episode: "S01 E03",
+    episode: "S01 E04",
     url: "https://github.com/HxTag/hariom-portfolio"
   }
 ];
