@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -49,6 +50,15 @@ const Skills = () => {
   const bgRefs = useRef([]);
   const textRefs = useRef([]);
   const scrollFrameRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start']
+  });
+  const mobileBackdropY = useTransform(
+    scrollYProgress,
+    [0, 1],
+    ['-10%', '20%']
+  );
 
   /*
    * MOBILE SCROLL HANDLING
@@ -324,9 +334,10 @@ const Skills = () => {
 
       <div
         className="
+          hidden
+          md:flex
           absolute
           inset-0
-          flex
           items-center
           justify-center
           z-0
@@ -339,16 +350,13 @@ const Skills = () => {
             ref={(el) => (textRefs.current[i] = el)}
             className="
               absolute
-              text-[48vw]
-              md:text-[18vw]
+              text-[18vw]
               font-black
               uppercase
-              text-red-600/[0.08]
-              md:text-transparent
+              text-transparent
               leading-none
               tracking-tighter
-              mix-blend-normal
-              md:mix-blend-overlay
+              mix-blend-overlay
             "
             style={{
               WebkitTextStroke:
@@ -362,6 +370,41 @@ const Skills = () => {
           </h1>
         ))}
       </div>
+
+      {/* Mobile uses the same background-word treatment and parallax motion as Contact. */}
+      <motion.div
+        style={{ y: mobileBackdropY }}
+        className="
+          md:hidden
+          absolute top-0 left-0
+          w-full h-full
+          flex flex-col justify-start items-center
+          overflow-hidden
+          pointer-events-none
+          z-0
+          pt-12
+          opacity-10
+        "
+      >
+        <h1
+          className="
+            text-[35vw]
+            leading-[0.75]
+            font-black
+            text-red-600
+            uppercase
+            tracking-tighter
+            select-none
+            scale-y-[1.6]
+            origin-top
+          "
+/*           style={{
+            fontFamily: "'Bebas Neue', 'Impact', sans-serif"
+          }} */
+        >
+          SKILLS
+        </h1>
+      </motion.div>
 
       {/* =================================
           SKILLS CAROUSEL
