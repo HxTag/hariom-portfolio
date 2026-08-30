@@ -371,7 +371,7 @@ const Skills = () => {
         ))}
       </div>
 
-      {/* Mobile uses the same background-word treatment and parallax motion as Contact. */}
+      {/* Mobile background word matches the Contact section treatment. */}
       <motion.div
         style={{ y: mobileBackdropY }}
         className="
@@ -382,25 +382,20 @@ const Skills = () => {
           overflow-hidden
           pointer-events-none
           z-0
-          pt-12
-          opacity-10
+          pt-16
         "
       >
         <h1
           className="
-            text-[35vw]
-            leading-[0.75]
+            text-[30vw]
             font-black
-            text-red-600
-            uppercase
+            text-white/[0.05]
             tracking-tighter
+            leading-none
+            whitespace-nowrap
+            uppercase
             select-none
-            scale-y-[1.6]
-            origin-top
           "
-/*           style={{
-            fontFamily: "'Bebas Neue', 'Impact', sans-serif"
-          }} */
         >
           SKILLS
         </h1>

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -44,14 +44,27 @@ const projectsData = [
   }
 ];
 
+const featuredProjects = projectsData.slice(0, 7);
+
 const Projects = () => {
+  const [isProjectsArchiveOpen, setIsProjectsArchiveOpen] = useState(false);
   const containerRef = useRef(null);
   const folderBackRef = useRef(null);
   const folderFrontRef = useRef(null);
   const cardsRef = useRef([]);
   const mobileCardsRef = useRef([]);
+  const archiveRef = useRef(null);
   const gestureRef = useRef({ intent: null, startX: 0, startY: 0 });
   const suppressClickRef = useRef(false);
+  const displayedProjects = [...featuredProjects, null];
+
+  const revealAllProjects = () => {
+    setIsProjectsArchiveOpen(true);
+  };
+
+  const closeProjectsArchive = () => {
+    setIsProjectsArchiveOpen(false);
+  };
 
   const handlePointerDown = (event) => {
     if (event.pointerType !== 'touch') return;
@@ -90,6 +103,50 @@ const Projects = () => {
     event.preventDefault();
     event.stopPropagation();
   };
+
+  useLayoutEffect(() => {
+    if (!isProjectsArchiveOpen || !archiveRef.current) return;
+
+    const archiveCards = archiveRef.current.querySelectorAll('[data-archive-card]');
+
+    gsap.fromTo(
+      archiveRef.current,
+      {
+        opacity: 0,
+        scale: 0.98
+      },
+      {
+        opacity: 1,
+        scale: 1,
+        duration: 0.28,
+        ease: 'power2.out'
+      }
+    );
+
+    gsap.fromTo(
+      archiveCards,
+      { opacity: 0, y: 36, scale: 0.96 },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.55,
+        stagger: 0.08,
+        ease: 'back.out(1.15)'
+      }
+    );
+  }, [isProjectsArchiveOpen]);
+
+  useEffect(() => {
+    if (!isProjectsArchiveOpen) return undefined;
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') closeProjectsArchive();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isProjectsArchiveOpen]);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -513,7 +570,7 @@ const Projects = () => {
           {/* =================================
               DESKTOP PROJECT CARDS
           ================================= */}
-          {projectsData.map((project, i) => (
+          {displayedProjects.map((project, i) => (
             <div
               key={i}
               ref={(el) => {
@@ -533,7 +590,9 @@ const Projects = () => {
                 zIndex: 10 + i
               }}
             >
+              {project ? (
               <a
+                data-project-card
                 href={project.url}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -694,6 +753,57 @@ const Projects = () => {
                 " />
 
               </a>
+              ) : (
+                <button
+                  type="button"
+                  data-project-card
+                  onClick={revealAllProjects}
+                  aria-label="View all projects"
+                  className="
+                    w-full
+                    h-full
+                    rounded-[24px]
+                    overflow-hidden
+                    border
+                    border-red-600/40
+                    bg-[#141414]/95
+                    backdrop-blur-2xl
+                    shadow-[0_25px_50px_rgba(0,0,0,0.9)]
+                    transition-all
+                    duration-500
+                    group
+                    hover:scale-[1.04]
+                    hover:border-red-600
+                    hover:shadow-[0_35px_80px_rgba(229,9,20,0.35)]
+                    hover:-translate-y-2
+                    focus-visible:outline-none
+                    focus-visible:ring-2
+                    focus-visible:ring-red-500
+                    cursor-pointer
+                    relative
+                    z-10
+                    p-7
+                    flex
+                    flex-col
+                    items-center
+                    justify-center
+                    gap-4
+                  "
+                >
+                  <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-red-500 bg-red-600/10 px-2.5 py-1 rounded border border-red-600/20">
+                    PROJECT_ARCHIVE
+                  </span>
+                  <span className="w-14 h-14 rounded-full border border-red-600/50 bg-red-600/10 flex items-center justify-center text-3xl text-red-500 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12">
+                    ↗
+                  </span>
+                  <span className="text-2xl font-black text-white tracking-tight group-hover:text-red-500 transition-colors duration-300">
+                    View All Projects
+                  </span>
+                  <span className="text-xs text-white/60 font-light">
+                    Explore the complete archive
+                  </span>
+                </button>
+              )}
             </div>
           ))}
 
@@ -801,7 +911,7 @@ const Projects = () => {
           }
         `}</style>
 
-        {projectsData.map((project, i) => (
+        {displayedProjects.map((project, i) => (
           <div
             key={`mob-${i}`}
             ref={(el) => {
@@ -818,7 +928,9 @@ const Projects = () => {
             "
           >
 
+            {project ? (
             <a
+              data-project-card
               href={project.url}
               target="_blank"
               rel="noopener noreferrer"
@@ -919,10 +1031,129 @@ const Projects = () => {
               </div>
 
             </a>
+            ) : (
+              <button
+                type="button"
+                data-project-card
+                onClick={revealAllProjects}
+                aria-label="View all projects"
+                className="
+                  w-full
+                  h-full
+                  rounded-[24px]
+                  overflow-hidden
+                  border
+                  border-red-600/40
+                  bg-[#141414]
+                  p-6
+                  flex
+                  flex-col
+                  items-center
+                  justify-center
+                  gap-3
+                  shadow-[0_20px_40px_rgba(0,0,0,0.9)]
+                  transition-all
+                  duration-500
+                  active:scale-[0.98]
+                  focus-visible:outline-none
+                  focus-visible:ring-2
+                  focus-visible:ring-red-500
+                "
+              >
+                <span className="text-[10px] font-mono font-bold tracking-widest text-red-500 bg-red-600/10 px-2 py-0.5 rounded">
+                  PROJECT_ARCHIVE
+                </span>
+                <span className="w-12 h-12 rounded-full border border-red-600/50 bg-red-600/10 flex items-center justify-center text-2xl text-red-500">
+                  ↗
+                </span>
+                <span className="text-xl font-black text-white">
+                  View All Projects
+                </span>
+                <span className="text-xs text-white/60 font-light">
+                  Explore the complete archive
+                </span>
+              </button>
+            )}
           </div>
         ))}
 
       </div>
+
+      {isProjectsArchiveOpen && (
+        <div
+          ref={archiveRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="projects-archive-title"
+          className="fixed inset-0 z-[200] overflow-y-auto bg-[#0b0b0b]/95 backdrop-blur-xl px-5 py-8 md:px-10 md:py-12"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) closeProjectsArchive();
+          }}
+        >
+          <div className="mx-auto w-full max-w-6xl">
+            <div className="mb-8 flex items-center justify-between border-b border-white/10 pb-5 md:mb-10">
+              <div>
+                <p className="mb-2 text-[10px] font-mono font-bold tracking-[0.25em] text-red-500">
+                  PROJECT_ARCHIVE
+                </p>
+                <h2 id="projects-archive-title" className="text-3xl font-black tracking-tight text-white md:text-5xl">
+                  All Projects
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={closeProjectsArchive}
+                aria-label="Close all projects"
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/5 text-2xl text-white transition-colors hover:border-red-500 hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 pb-6 sm:grid-cols-2 lg:grid-cols-3">
+              {projectsData.map((project) => (
+                <a
+                  key={`archive-${project.title}`}
+                  data-archive-card
+                  href={project.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Open ${project.title} on GitHub`}
+                  className="group relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-[24px] border border-white/15 bg-[#141414]/95 p-6 shadow-[0_25px_50px_rgba(0,0,0,0.9)] transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] hover:border-red-600 hover:shadow-[0_35px_80px_rgba(229,9,20,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="rounded border border-red-600/20 bg-red-600/10 px-2.5 py-1 text-[10px] font-mono font-bold tracking-widest text-red-500">
+                      {project.episode}
+                    </span>
+                    <span className="text-xs font-mono font-bold text-red-400">GITHUB ↗</span>
+                  </div>
+
+                  <div className="my-auto space-y-2 py-6">
+                    <p className="text-[11px] font-mono uppercase tracking-widest text-white/40">
+                      {project.category}
+                    </p>
+                    <h3 className="text-2xl font-black tracking-tight text-white transition-colors duration-300 group-hover:text-red-500">
+                      {project.title}
+                    </h3>
+                    <p className="text-xs font-light leading-relaxed text-white/70">
+                      {project.description}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-1.5 border-t border-white/10 pt-3">
+                    {project.tags.map((tag) => (
+                      <span key={tag} className="rounded bg-white/5 px-2 py-0.5 text-[10px] font-mono text-white/70">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <span className="absolute bottom-4 right-4 h-2 w-2 rounded-full bg-red-600 transition-all group-hover:shadow-[0_0_15px_#E50914]" />
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
     </section>
   );
