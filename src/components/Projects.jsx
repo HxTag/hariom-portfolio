@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -50,8 +50,48 @@ const Projects = () => {
   const folderFrontRef = useRef(null);
   const cardsRef = useRef([]);
   const mobileCardsRef = useRef([]);
+  const gestureRef = useRef({ intent: null, startX: 0, startY: 0 });
+  const suppressClickRef = useRef(false);
 
-  useEffect(() => {
+  const handlePointerDown = (event) => {
+    if (event.pointerType !== 'touch') return;
+
+    gestureRef.current = {
+      intent: null,
+      startX: event.clientX,
+      startY: event.clientY
+    };
+  };
+
+  const handlePointerMove = (event) => {
+    if (event.pointerType !== 'touch' || gestureRef.current.intent) return;
+
+    const deltaX = event.clientX - gestureRef.current.startX;
+    const deltaY = event.clientY - gestureRef.current.startY;
+
+    if (Math.max(Math.abs(deltaX), Math.abs(deltaY)) < 8) return;
+
+    gestureRef.current.intent =
+      Math.abs(deltaX) > Math.abs(deltaY) ? 'horizontal' : 'vertical';
+  };
+
+  const handlePointerUp = (event) => {
+    if (event.pointerType !== 'touch') return;
+
+    suppressClickRef.current = gestureRef.current.intent === 'horizontal';
+    window.setTimeout(() => {
+      suppressClickRef.current = false;
+    }, 250);
+  };
+
+  const handleCardClickCapture = (event) => {
+    if (!suppressClickRef.current) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       // --------------------------------
       // INITIAL FOLDER SETUP
@@ -92,10 +132,8 @@ const Projects = () => {
         return { row, col };
       };
 
-      // --------------------------------
-      // DESKTOP CARD INITIAL STATE
-      // --------------------------------
-      cardsRef.current.forEach((card) => {
+      const setDesktopCardState = () => {
+        cardsRef.current.forEach((card) => {
         if (!card) return;
 
         gsap.set(card, {
@@ -107,7 +145,8 @@ const Projects = () => {
           y: 0,
           opacity: 1
         });
-      });
+        });
+      };
 
       // --------------------------------
       // RESPONSIVE GSAP
@@ -120,12 +159,18 @@ const Projects = () => {
       mm.add("(min-width: 768px)", () => {
         let floatTween;
 
+        // This runs whenever the viewport enters desktop mode, including
+        // after resizing from mobile, so cards always start from the same
+        // centered transform baseline before their timeline plays.
+        setDesktopCardState();
+
         const timeline = gsap.timeline({
           scrollTrigger: {
             trigger: containerRef.current,
             start: "top 50%",
             end: "bottom 50%",
             toggleActions: "play reverse play reverse",
+            invalidateOnRefresh: true,
 
             onEnter: () => {
               if (floatTween) floatTween.kill();
@@ -304,7 +349,19 @@ const Projects = () => {
       });
     }, containerRef);
 
+    let resizeFrame;
+    const refreshAfterResize = () => {
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(() => {
+        ScrollTrigger.refresh();
+      });
+    };
+
+    window.addEventListener('resize', refreshAfterResize);
+
     return () => {
+      window.removeEventListener('resize', refreshAfterResize);
+      cancelAnimationFrame(resizeFrame);
       ctx.revert();
     };
   }, []);
@@ -716,7 +773,7 @@ const Projects = () => {
           snap-x
           snap-mandatory
 
-          touch-pan-x
+          touch-auto
           overscroll-x-contain
 
           hide-scrollbar
@@ -725,6 +782,11 @@ const Projects = () => {
           WebkitOverflowScrolling: "touch",
           scrollbarWidth: "none"
         }}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
+        onClickCapture={handleCardClickCapture}
       >
 
         <style>{`

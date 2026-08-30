@@ -48,6 +48,7 @@ const Skills = () => {
   const cardsRef = useRef([]);
   const bgRefs = useRef([]);
   const textRefs = useRef([]);
+  const scrollFrameRef = useRef(null);
 
   /*
    * MOBILE SCROLL HANDLING
@@ -61,7 +62,10 @@ const Skills = () => {
 
     const container = e.currentTarget;
 
-    requestAnimationFrame(() => {
+    if (scrollFrameRef.current) return;
+
+    scrollFrameRef.current = requestAnimationFrame(() => {
+      scrollFrameRef.current = null;
       const center =
         container.scrollLeft + container.clientWidth / 2;
 
@@ -122,7 +126,7 @@ const Skills = () => {
       // ==========================================
       // DESKTOP
       // ==========================================
-      mm.add('(min-width: 769px)', () => {
+      mm.add('(min-width: 768px)', () => {
         const updateCards = (progress) => {
           cardsRef.current.forEach((card, i) => {
             if (!card) return;
@@ -194,12 +198,13 @@ const Skills = () => {
 
         updateCards(0);
 
-        ScrollTrigger.create({
+        const trigger = ScrollTrigger.create({
           trigger: sectionRef.current,
           start: 'top top',
           end: '+=500%',
           pin: true,
           scrub: 1,
+          invalidateOnRefresh: true,
 
           onUpdate: (self) => {
             const progress =
@@ -207,14 +212,20 @@ const Skills = () => {
               (skillCategories.length - 1);
 
             updateCards(progress);
+          },
+
+          onRefresh: (self) => {
+            updateCards(self.progress * (skillCategories.length - 1));
           }
         });
+
+        return () => trigger.kill();
       });
 
       // ==========================================
       // MOBILE
       // ==========================================
-      mm.add('(max-width: 768px)', () => {
+      mm.add('(max-width: 767px)', () => {
         cardsRef.current.forEach((card, i) => {
           if (!card) return;
 
@@ -248,7 +259,22 @@ const Skills = () => {
       });
     }, sectionRef);
 
-    return () => ctx.revert();
+    let resizeFrame;
+    const refreshAfterResize = () => {
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(() => {
+        ScrollTrigger.refresh();
+      });
+    };
+
+    window.addEventListener('resize', refreshAfterResize);
+
+    return () => {
+      window.removeEventListener('resize', refreshAfterResize);
+      cancelAnimationFrame(resizeFrame);
+      cancelAnimationFrame(scrollFrameRef.current);
+      ctx.revert();
+    };
   }, []);
 
   return (
@@ -374,7 +400,7 @@ const Skills = () => {
           gap-4
           md:gap-0
 
-          touch-pan-x
+          touch-auto
           overscroll-x-contain
         "
       >
