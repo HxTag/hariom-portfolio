@@ -403,11 +403,12 @@ const Projects = () => {
         z-0
       ">
         <h1 className="
-          text-[14vw]
+          text-[20vw]
           sm:text-[17vw]
           md:text-[20vw]
           font-black
-          text-white/[0.03]
+          text-white/[0.05]
+          md:text-white/[0.03]
           tracking-tighter
           leading-none
           whitespace-nowrap

@@ -252,7 +252,6 @@ const Skills = () => {
           if (!txt) return;
 
           gsap.set(txt, {
-            clearProps: 'all',
             opacity: i === 0 ? 1 : 0
           });
         });
@@ -340,14 +339,16 @@ const Skills = () => {
             ref={(el) => (textRefs.current[i] = el)}
             className="
               absolute
-              text-[22vw]
+              text-[48vw]
               md:text-[18vw]
               font-black
               uppercase
-              text-transparent
+              text-red-600/[0.08]
+              md:text-transparent
               leading-none
               tracking-tighter
-              mix-blend-overlay
+              mix-blend-normal
+              md:mix-blend-overlay
             "
             style={{
               WebkitTextStroke:
