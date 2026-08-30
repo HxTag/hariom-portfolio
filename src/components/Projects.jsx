@@ -7,31 +7,22 @@ gsap.registerPlugin(ScrollTrigger);
 // Project Data
 const projectsData = [
   {
-    title: "Global Currency Rate Prediction",
+    title: "Global Currency Exchange Rate Prediction",
     category: "Machine Learning & Data Science",
     description:
-      "Machine learning project for analyzing historical currency exchange data and predicting future exchange rates using Python and ML techniques.",
+      "A machine learning project for predicting global currency exchange rates using historical financial data.",
     tags: ["Python", "Machine Learning", "Pandas", "Scikit-learn"],
-    match: "99%",
-    episode: "S01 E01"
+    episode: "S01 E01",
+    url: "https://github.com/HxTag/global-currency-exchange-rate-prediction"
   },
   {
     title: "Virtual Study Group",
     category: "Full-Stack Web Development",
     description:
-      "Collaborative study platform that allows students to create and join study groups, communicate in real time, share resources, and manage study sessions.",
-    tags: ["HTML", "CSS", "JavaScript", "PHP", "MySQL"],
-    match: "98%",
-    episode: "S01 E02"
-  },
-  {
-    title: "Eye Activity Detection",
-    category: "Computer Vision & AI",
-    description:
-      "Computer vision system designed to detect eye states through a camera and provide real-time alerts when eyes remain closed or the user moves away from the camera.",
-    tags: ["Python", "OpenCV", "MediaPipe", "Computer Vision"],
-    match: "97%",
-    episode: "S01 E03"
+      "A collaborative platform for students to form virtual study groups, share resources, and learn together online.",
+    tags: ["PHP", "MySQL", "WebSocket", "JavaScript"],
+    episode: "S01 E02",
+    url: "https://github.com/HxTag/Virtual-Study-Group"
   },
   {
     title: "Netflix Developer Portfolio",
@@ -39,44 +30,8 @@ const projectsData = [
     description:
       "Cinematic developer portfolio inspired by Netflix, featuring interactive animations, responsive layouts, custom cursor effects, and GSAP-powered interactions.",
     tags: ["React", "GSAP", "Tailwind CSS", "JavaScript"],
-    match: "100%",
-    episode: "S01 E04"
-  },
-  {
-    title: "Employee Equality Analysis",
-    category: "Data Analysis",
-    description:
-      "Data analysis project for evaluating employee compensation equality across factories and job roles using equality scores and structured Excel data.",
-    tags: ["Excel", "Data Analysis", "Statistics", "Data Visualization"],
-    match: "96%",
-    episode: "S01 E05"
-  },
-  {
-    title: "Flask MySQL Web Application",
-    category: "Backend Development",
-    description:
-      "Web application developed using Flask and MySQL with database connectivity, data handling, and server-side application functionality.",
-    tags: ["Python", "Flask", "MySQL", "HTML"],
-    match: "98%",
-    episode: "S01 E06"
-  },
-  {
-    title: "AI & Machine Learning Projects",
-    category: "Artificial Intelligence",
-    description:
-      "Collection of practical AI and machine learning projects involving data preprocessing, model development, prediction, and intelligent automation.",
-    tags: ["Python", "NumPy", "Pandas", "Scikit-learn"],
-    match: "97%",
-    episode: "S01 E07"
-  },
-  {
-    title: "GitHub Developer Portfolio",
-    category: "Developer Profile & Open Source",
-    description:
-      "Personal developer profile showcasing technical skills, projects, certifications, achievements, and software development experience.",
-    tags: ["Git", "GitHub", "Markdown", "React"],
-    match: "99%",
-    episode: "S01 E08"
+    episode: "S01 E03",
+    url: "https://github.com/HxTag/hariom-portfolio"
   }
 ];
 
@@ -279,7 +234,7 @@ const Projects = () => {
          * them appear transparent.
          */
 
-        mobileCardsRef.current.forEach((card, i) => {
+        mobileCardsRef.current.forEach((card) => {
           if (!card) return;
 
           gsap.set(card, {
@@ -511,7 +466,12 @@ const Projects = () => {
                 zIndex: 10 + i
               }}
             >
-              <div className="
+              <a
+                href={project.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Open ${project.title} on GitHub`}
+                className="
                 w-full
                 h-full
                 rounded-[24px]
@@ -535,6 +495,7 @@ const Projects = () => {
                 flex
                 flex-col
                 justify-between
+                no-underline
               ">
 
                 {/* Header */}
@@ -571,7 +532,7 @@ const Projects = () => {
                       text-red-400
                       font-bold
                     ">
-                      {project.match} Match
+                      GITHUB ↗
                     </span>
 
                     <span className="
@@ -665,7 +626,7 @@ const Projects = () => {
                   transition-all
                 " />
 
-              </div>
+              </a>
             </div>
           ))}
 
@@ -785,7 +746,12 @@ const Projects = () => {
             "
           >
 
-            <div className="
+            <a
+              href={project.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Open ${project.title} on GitHub`}
+              className="
               w-full
               h-full
               rounded-[24px]
@@ -798,6 +764,7 @@ const Projects = () => {
               flex-col
               justify-between
               shadow-[0_20px_40px_rgba(0,0,0,0.9)]
+              no-underline
             ">
 
               {/* Header */}
@@ -826,7 +793,7 @@ const Projects = () => {
                   text-red-400
                   font-bold
                 ">
-                  {project.match} Match
+                  GITHUB ↗
                 </span>
               </div>
 
@@ -879,7 +846,7 @@ const Projects = () => {
                 ))}
               </div>
 
-            </div>
+            </a>
           </div>
         ))}
 
